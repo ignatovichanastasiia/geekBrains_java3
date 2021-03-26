@@ -14,7 +14,7 @@ public class ClientHandler {
     private boolean authBoolean;
     //    private Timer timer;
 //    private TimerTask task;
-    private final static long time = 120000;
+    private final static long time = 360000;
 
     //конструктор хэндлера + стримы и поток;
     public ClientHandler(MyServer myServer, Socket socket) {
@@ -30,7 +30,7 @@ public class ClientHandler {
                     authBoolean = false;
                     new Thread(() -> {
                         try {
-                            Thread.sleep(120000);
+                            Thread.sleep(time);
                             timeOfAuth();
                         } catch (InterruptedException ignored) {
                         }
@@ -64,38 +64,45 @@ public class ClientHandler {
     }
 
     //логинимся
+    // /auth login password - для входа, /reg login password nick - для регистрации в чат.
     private void authentication() {
         while (true) {
             try {
-                sendMessage("Админ: /auth login password - для входа, /reg login password nick - для регистрации в чат. ");
                 String authStr = dis.readUTF();
                 if (authStr.startsWith("/auth")) {
                     String[] arr = authStr.split("\\s");
-                    String nick = myServer.getAuthService().getNickByLoginAndPassword(arr[1], arr[2]);
-                    if (!nick.isEmpty()) {
-                        if (!myServer.isNickBusy(nick)) {
-                            authBoolean = true;
-                            sendMessage("/authok " + nick);
-                            this.nick = nick;
-                            myServer.sendMessageToClients("Админ---"+this.nick+" вошел в чат. ");
-                            myServer.subscrible(this);
-                            return;
+                    if(arr.length==3) {
+                        String nick = myServer.getAuthService().getNickByLoginAndPassword(arr[1], arr[2]);
+                        if (nick!=null) {
+                            if (!myServer.isNickBusy(nick)) {
+                                authBoolean = true;
+                                sendMessage("/authok " + nick);
+                                this.nick = nick;
+                                myServer.sendMessageToClients("Админ---" + this.nick + " вошел в чат. ");
+                                myServer.subscrible(this);
+                                return;
+                            } else {
+                                sendMessage("Админ: " + this.nick + " - ник уже авторизован. ");
+                            }
                         } else {
-                            sendMessage("Админ: "+ this.nick + " - ник уже авторизован. ");
+                            sendMessage("Админ: неверный логин или пароль. ");
                         }
-                    } else {
-                        sendMessage("Админ: неверный логин или пароль. ");
+                    }else{
+                        sendMessage("Админ: неверный запрос. Напишите: /auth login password");
                     }
                 }
                 if(authStr.startsWith("/reg")) {
                     String[] arr = authStr.split("\\s");
-                    if(myServer.getAuthService().registration(arr[1],arr[2],arr[3])){
-                        sendMessage("Админ: пользователь зарегистрировался. ");
+                    if(arr.length==4) {
+                        if (myServer.getAuthService().registration(arr[1], arr[2], arr[3])) {
+                            sendMessage("Админ: пользователь зарегистрировался. ");
+                        } else {
+                            sendMessage("Админ: что-то пошло не так. Попробуйте другое имя. ");
+                        }
                     }else{
-                        sendMessage("Админ: что-то пошло не так. ");
+                        sendMessage("Админ: неверный запрос. Напишите: /reg login password nick. ");
                     }
                 }
-
             } catch (IOException ignored) {
             }
         }

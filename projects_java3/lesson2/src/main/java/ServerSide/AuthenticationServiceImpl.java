@@ -6,23 +6,28 @@ import java.sql.*;
 public class AuthenticationServiceImpl implements AuthenticationService {
     private static Connection connection;
     private static Statement statement;
-    private Object ResultSet;
+    private ResultSet resultSet;
+    private ResultSet resSet;
+    private String nick;
 
 
     public AuthenticationServiceImpl() {
-        try {
-            statement.execute("create table if not exists users (login text primary key not null,password text not null,nick text not null);");
-            statement.execute("insert into users (login,password,nick) values ('A','A','A');");
-            statement.execute("insert into users (login,password,nick) values ('B','B','B');");
-            statement.execute("insert into users (login,password,nick) values ('C','C','C');");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connectDB();
     }
 
     @Override
     public void start() {
-        connectDB();
+        try {
+            statement.execute("create table if not exists users (login text primary key not null,password text not null,nick text not null);");
+            statement.execute("delete from users;");
+
+//            statement.execute("insert into users (login,password,nick) values ('A','A','A');");
+//            statement.execute("insert into users (login,password,nick) values ('B','B','B');");
+//            statement.execute("insert into users (login,password,nick) values ('C','C','C');");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         System.out.println("Start");
     }
 
@@ -35,25 +40,31 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String getNickByLoginAndPassword(String login, String password) {
         try {
-            PreparedStatement psq = connection.prepareStatement("select nick from users where name = '?' and password = '?'");
+            PreparedStatement psq = connection.prepareStatement("select nick from users where login = ? and password = ?");
             psq.setString(1, login);
             psq.setString(2, password);
-            ResultSet = psq.executeQuery();
+            resultSet = psq.executeQuery();
+            nick = resultSet.getString("nick");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            return (String) ResultSet;
+            return nick;
         }
     }
 
     @Override
-    public boolean registration(String login,String password,String nick){
+    public boolean registration(String login, String password, String nick) {
         try {
-            PreparedStatement psn = connection.prepareStatement("select from users nick where login = '?'");
-            psn.setString(1,login);
-            ResultSet = psn.executeQuery();
-            if(ResultSet.equals(null)) {
-                PreparedStatement psq = connection.prepareStatement("insert into users (login,password,nick) values ('?','?','?');");
+            PreparedStatement psn = connection.prepareStatement("select from users nick where login = ?");
+            psn.setString(1, login);
+            resSet = psn.executeQuery();
+            resSet.getString("nick");
+        } catch (SQLException e) {
+            resSet = null;
+        }
+        try {
+            if (resSet == null) {
+                PreparedStatement psq = connection.prepareStatement("insert into users (login,password,nick) values (?, ?, ?);");
                 psq.setString(1, login);
                 psq.setString(2, password);
                 psq.setString(3, nick);
