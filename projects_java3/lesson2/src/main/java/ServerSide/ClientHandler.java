@@ -1,8 +1,6 @@
 package ServerSide;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler {
@@ -10,11 +8,14 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream dis;
     private DataOutputStream dos;
+
     private String nick;
     private boolean authBoolean;
-    //    private Timer timer;
-//    private TimerTask task;
     private final static long time = 360000;
+
+    private static File history;
+    private static int count;
+
 
     //конструктор хэндлера + стримы и поток;
     public ClientHandler(MyServer myServer, Socket socket) {
@@ -24,10 +25,11 @@ public class ClientHandler {
             this.dis = new DataInputStream(socket.getInputStream());
             this.dos = new DataOutputStream(socket.getOutputStream());
             this.nick = "";
+            this.history = getHistory();
 
             new Thread(() -> {
                 try{
-                    authBoolean = false;
+                    setAuthTimer(false);
                     new Thread(() -> {
                         try {
                             Thread.sleep(time);
@@ -54,6 +56,17 @@ public class ClientHandler {
         return nick;
     }
 
+    public File getHistory() {
+            if (history == null) {
+                history = new File("history.txt");
+            }
+        return history;
+    }
+
+    public static int getCount() {
+        return count;
+    }
+
     //геттер и сеттер на логин
     public boolean getAuthBoolean() {
         return authBoolean;
@@ -75,7 +88,7 @@ public class ClientHandler {
                         String nick = myServer.getAuthService().getNickByLoginAndPassword(arr[1], arr[2]);
                         if (nick!=null) {
                             if (!myServer.isNickBusy(nick)) {
-                                authBoolean = true;
+                                setAuthTimer(true);
                                 sendMessage("/authok " + nick);
                                 this.nick = nick;
                                 myServer.sendMessageToClients("Админ---" + this.nick + " вошел в чат. ");
@@ -112,6 +125,7 @@ public class ClientHandler {
     public void sendMessage(String message) {
         try {
             dos.writeUTF(message);
+            writeHistory(message);
         } catch (IOException ignored) {
         }
     }
@@ -131,10 +145,23 @@ public class ClientHandler {
 
     //проверка на время
     private void timeOfAuth(){
-        if(!authBoolean){
+        if(!getAuthBoolean()){
             sendMessage("Админ: время на авторизацию закончилось. ");
             closeConnection();
         }
+    }
+
+    //запись истории - история с командами и приватами!
+    private void writeHistory(String mes){
+        try(BufferedOutputStream buf = new BufferedOutputStream(new FileOutputStream(getHistory(),true))){
+            String message = new String(mes + "\n");
+            buf.write(message.getBytes());
+                count++;
+        } catch (IOException e) {
+            System.out.println("Ошибка с записью истории.");
+            e.printStackTrace();
+        }
+
     }
 
     //закрывашка для выхода клиента
