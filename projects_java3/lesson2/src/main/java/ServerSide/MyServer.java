@@ -60,7 +60,7 @@ public class MyServer {
                     if (arr1.length < 3)
                         sendMessageByNick("Неверный формат приват-сообщения. Формат: /w nick сообщение.", nick);
                     String toNick = arr1[1];
-                    String privateMessage = (nick + "(приватное сообщение для " + toNick + "): " + arr1[2]);
+                    String privateMessage = ("!"+nick + "(приватное сообщение для " + toNick + "): " + arr1[2]);
                     if (sendMessageByNick(privateMessage, toNick)) {
                         sendMessageByNick(privateMessage, nick);
                     } else {
@@ -78,9 +78,14 @@ public class MyServer {
                     sendMessageByNick("Online: "+ou, nick);
                     break;
 
+                //история чата
+                case ("/hist"):
+                    sendMessageByNick("/hist", nick);
+                    break;
+
                 //дефолт на ошибочную команду
                 default:
-                    sendMessageByNick("Команда неизвестна.\n /w nick - приватное собщение.\n /ou - ники онлайн. ", nick);
+                    sendMessageByNick("Команда неизвестна.\n /w nick - приватное собщение.\n /ou - ники онлайн.\n /hist - история. ", nick);
                     break;
             }
             //обычная отправка на всех

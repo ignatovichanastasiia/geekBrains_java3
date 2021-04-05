@@ -1,7 +1,10 @@
 package ServerSide;
 
+import ClientSide.HistoryWindow;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientHandler {
     private MyServer myServer;
@@ -12,9 +15,10 @@ public class ClientHandler {
     private String nick;
     private boolean authBoolean;
     private final static long time = 360000;
+    private final int historyMax = 10;
 
     private static File history;
-    private static int count;
+    public ArrayList<String> rHistory;
 
 
     //конструктор хэндлера + стримы и поток;
@@ -28,7 +32,7 @@ public class ClientHandler {
             this.history = getHistory();
 
             new Thread(() -> {
-                try{
+                try {
                     setAuthTimer(false);
                     new Thread(() -> {
                         try {
@@ -57,14 +61,10 @@ public class ClientHandler {
     }
 
     public File getHistory() {
-            if (history == null) {
-                history = new File("history.txt");
-            }
+        if (history == null) {
+            history = new File("history.txt");
+        }
         return history;
-    }
-
-    public static int getCount() {
-        return count;
     }
 
     //геттер и сеттер на логин
@@ -84,9 +84,9 @@ public class ClientHandler {
                 String authStr = dis.readUTF();
                 if (authStr.startsWith("/auth")) {
                     String[] arr = authStr.split("\\s");
-                    if(arr.length==3) {
+                    if (arr.length == 3) {
                         String nick = myServer.getAuthService().getNickByLoginAndPassword(arr[1], arr[2]);
-                        if (nick!=null) {
+                        if (nick != null) {
                             if (!myServer.isNickBusy(nick)) {
                                 setAuthTimer(true);
                                 sendMessage("/authok " + nick);
@@ -100,19 +100,19 @@ public class ClientHandler {
                         } else {
                             sendMessage("Админ: неверный логин или пароль. ");
                         }
-                    }else{
+                    } else {
                         sendMessage("Админ: неверный запрос. Напишите: /auth login password");
                     }
                 }
-                if(authStr.startsWith("/reg")) {
+                if (authStr.startsWith("/reg")) {
                     String[] arr = authStr.split("\\s");
-                    if(arr.length==4) {
+                    if (arr.length == 4) {
                         if (myServer.getAuthService().registration(arr[1], arr[2], arr[3])) {
                             sendMessage("Админ: пользователь зарегистрировался. ");
                         } else {
                             sendMessage("Админ: что-то пошло не так. Попробуйте другое имя. ");
                         }
-                    }else{
+                    } else {
                         sendMessage("Админ: неверный запрос. Напишите: /reg login password nick. ");
                     }
                 }
@@ -121,9 +121,14 @@ public class ClientHandler {
         }
 
     }
+
     //отправка сообщения на сервер
     public void sendMessage(String message) {
         try {
+            if (message.startsWith("/hist")) {
+                readHistory();
+                return;
+            }
             dos.writeUTF(message);
             writeHistory(message);
         } catch (IOException ignored) {
@@ -139,26 +144,51 @@ public class ClientHandler {
                 return;
             }
 
-            myServer.sendMessageToClients(nick +"---"+messageFromClient);
+            myServer.sendMessageToClients(nick + "---" + messageFromClient);
         }
     }
 
     //проверка на время
-    private void timeOfAuth(){
-        if(!getAuthBoolean()){
+    private void timeOfAuth() {
+        if (!getAuthBoolean()) {
             sendMessage("Админ: время на авторизацию закончилось. ");
             closeConnection();
         }
     }
 
     //запись истории - история с командами и приватами!
-    private void writeHistory(String mes){
-        try(BufferedOutputStream buf = new BufferedOutputStream(new FileOutputStream(getHistory(),true))){
+    private void writeHistory(String mes) {
+        try (BufferedOutputStream buf = new BufferedOutputStream(new FileOutputStream(getHistory(), true))) {
             String message = new String(mes + "\n");
             buf.write(message.getBytes());
-                count++;
         } catch (IOException e) {
             System.out.println("Ошибка с записью истории.");
+            e.printStackTrace();
+        }
+
+    }
+
+    //чтение истории, фильтр сообщений на вывод, команда на создание окна под историю+вывод
+    public void readHistory() {
+        int count = 0;
+        rHistory = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(getHistory()))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("/") && !line.startsWith("!")) {
+                        rHistory.add(line);
+                        count++;
+                }
+            }
+            HistoryWindow hw = new HistoryWindow();
+            hw.setLineCount(count - historyMax);
+            hw.histPrint(rHistory);
+            sendMessage("Админ: окно истории загрузилось.");
+        } catch (
+                FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
 
@@ -167,11 +197,11 @@ public class ClientHandler {
     //закрывашка для выхода клиента
     private void closeChat() {
         myServer.unsubscrible(this);
-        myServer.sendMessageToClients("Админ---"+ nick + " покинул чат. ");
+        myServer.sendMessageToClients("Админ---" + nick + " покинул чат. ");
     }
 
     //закрывашка
-    private void closeConnection(){
+    private void closeConnection() {
         try {
             dos.flush();
         } catch (IOException e) {
