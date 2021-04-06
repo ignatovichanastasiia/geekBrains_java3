@@ -39,8 +39,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String getNickByLoginAndPassword(String login, String password) {
-        try {
-            PreparedStatement psq = connection.prepareStatement("select nick from users where login = ? and password = ?");
+        try (PreparedStatement psq = connection.prepareStatement("select nick from users where login = ? and password = ?");) {
             psq.setString(1, login);
             psq.setString(2, password);
             resultSet = psq.executeQuery();
@@ -54,8 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean registration(String login, String password, String nick) {
-        try {
-            PreparedStatement psn = connection.prepareStatement("select from users nick where login = ?");
+        try (PreparedStatement psn = connection.prepareStatement("select from users nick where login = ?");){
             psn.setString(1, login);
             resSet = psn.executeQuery();
             resSet.getString("nick");

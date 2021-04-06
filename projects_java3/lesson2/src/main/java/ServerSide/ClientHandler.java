@@ -5,6 +5,8 @@ import ClientSide.HistoryWindow;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientHandler {
     private MyServer myServer;
@@ -31,29 +33,57 @@ public class ClientHandler {
             this.nick = "";
             this.history = getHistory();
 
-            new Thread(() -> {
+//            Экзекутор.
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            executor.execute(() -> {
                 try {
-                    setAuthTimer(false);
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(time);
-                            timeOfAuth();
-                        } catch (InterruptedException ignored) {
-                        }
-                    }).start();
+                    setAuthBoolean(false);
+                    while (getAuthBoolean()) {
+                        Thread.sleep(time);
+                        timeOfAuth();
+                    }
                     authentication();
                     readMessage();
-                } catch (IOException i) {
-                    i.printStackTrace();
+                } catch (InterruptedException ignored) {
+                } catch (IOException e) {
+                    e.printStackTrace();
                 } finally {
                     closeChat();
+                    executor.shutdown();
                 }
-            }).start();
-
+            });
         } catch (IOException e) {
             System.out.println("Server problem");
         }
     }
+
+//        Старые потоки.
+//            new Thread(() -> {
+//                try {
+//                    setAuthTimer(false);
+//                    new Thread(() -> {
+//                        try {
+//                            Thread.sleep(time);
+//                            timeOfAuth();
+//                        } catch (InterruptedException ignored) {
+//                        }
+//                    }).start();
+//                    authentication();
+//                    readMessage();
+//                } catch (IOException i) {
+//                    i.printStackTrace();
+//                } finally {
+//                    closeChat();
+//                }
+//            }).start();
+//    } catch(
+//    IOException e)
+//
+//    {
+//        System.out.println("Server problem");
+//    }
+//
+//}
 
     //геттер хэндлера
     public String getNick() {
@@ -72,7 +102,7 @@ public class ClientHandler {
         return authBoolean;
     }
 
-    public void setAuthTimer(boolean authBoolean) {
+    public void setAuthBoolean(boolean authBoolean) {
         this.authBoolean = authBoolean;
     }
 
@@ -88,7 +118,7 @@ public class ClientHandler {
                         String nick = myServer.getAuthService().getNickByLoginAndPassword(arr[1], arr[2]);
                         if (nick != null) {
                             if (!myServer.isNickBusy(nick)) {
-                                setAuthTimer(true);
+                                setAuthBoolean(true);
                                 sendMessage("/authok " + nick);
                                 this.nick = nick;
                                 myServer.sendMessageToClients("Админ---" + this.nick + " вошел в чат. ");
@@ -152,6 +182,7 @@ public class ClientHandler {
     private void timeOfAuth() {
         if (!getAuthBoolean()) {
             sendMessage("Админ: время на авторизацию закончилось. ");
+            setAuthBoolean(true);
             closeConnection();
         }
     }
@@ -176,8 +207,8 @@ public class ClientHandler {
             String line;
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("/") && !line.startsWith("!")) {
-                        rHistory.add(line);
-                        count++;
+                    rHistory.add(line);
+                    count++;
                 }
             }
             HistoryWindow hw = new HistoryWindow();
