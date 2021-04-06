@@ -22,17 +22,17 @@
 //import java.io.DataOutputStream;
 //import java.io.IOException;
 //import java.net.Socket;
-//
-//
+////
+////
 //    public class Window extends JFrame {
-//        private final static String IP_ADDRESS = "localhost"; //127.0.0.1
-//        private final static int SERVER_PORT = 8081;
-//        private Socket socket;
-//        private DataInputStream dis;
-//        private DataOutputStream dos;
+////        private final static String IP_ADDRESS = "localhost"; //127.0.0.1
+////        private final static int SERVER_PORT = 8081;
+////        private Socket socket;
+////        private DataInputStream dis;
+////        private DataOutputStream dos;
 //        public JTextArea jTextArea;
 //        public JTextField jTextField;
-//        private boolean isAuthorized;
+////        private boolean isAuthorized;
 //
 //
 //        public static void main(String[] args) {
@@ -46,12 +46,14 @@
 //            connection();
 //            prepareWindow();
 //        }
-//
+
+
+
 //        public void setIsAuthorized(boolean authorized) {
 //            isAuthorized = authorized;
 //        }
-//
-//
+
+
 //        private void connection() {
 //            try {
 //                //сокет, вход, выход
@@ -90,7 +92,7 @@
 //            } catch (IOException ignored) {
 //            }
 //        }
-//
+
 //        private void prepareWindow() {
 //            //окно
 //            JFrame jFrame = new JFrame();
