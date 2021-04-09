@@ -2,10 +2,12 @@ package races;
 
 public class Road extends Stage {
     long t;
+
     public Road(int length) {
         this.length = length;
         this.description = "Дорога " + length + " метров";
     }
+
     //ПРОХОЖДЕНИЕ ДОРОГИ(ЧАСТЬ ТРАССЫ)
     @Override
     public long go(Car c) {
@@ -19,7 +21,7 @@ public class Road extends Stage {
         return t;
     }
 
-    public long time(Car c){
+    public long time(Car c) {
         return (length / c.getSpeed() * 1000);
     }
 }

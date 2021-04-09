@@ -22,12 +22,12 @@ public class MainCode {
         for (int i = 0; i < cars.length; i++) {
             final int w = i;
             new Thread(() -> {
-                try{
+                try {
                     System.out.println(cars[w].getName() + " готовится. ");
                     Thread.sleep(500 + (int) (Math.random() * 800));
                     cb.await();
                     System.out.println(cars[w].getName() + " стартовал. ");
-                }catch(InterruptedException |BrokenBarrierException e){
+                } catch (InterruptedException | BrokenBarrierException e) {
                     e.printStackTrace();
                 }
                 for (int j = 0; j < race.getStages().size(); j++) {
@@ -39,18 +39,18 @@ public class MainCode {
         try {
             Thread.sleep(500);
             System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
-        }catch(InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        try{
+        try {
             cb.await();
             System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
-        }catch(InterruptedException |BrokenBarrierException e){
+            Car win = Car.winner(cars);
+            System.out.println("Победитель: " + win.getName() + " с результатом " + win.getT());
+        } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
     }
-
-//    ДОПИСАТЬ МЕТОД СРАВНЕНИЯ ВРЕМЕНИ car.getT;
 }
 
 

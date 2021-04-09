@@ -9,7 +9,7 @@ public abstract class Stage {
         return description;
     }
 
-    public int getLength(){
+    public int getLength() {
         return length;
 
     }

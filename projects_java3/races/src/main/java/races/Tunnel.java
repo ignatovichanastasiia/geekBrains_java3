@@ -1,9 +1,12 @@
 package races;
 
+import java.util.concurrent.Semaphore;
+
 public class Tunnel extends Stage {
     long t;
     long waitTime;
     long startTime;
+    Semaphore smp = new Semaphore(MainCode.CARS_COUNT / 2);
 
     public Tunnel() {
         this.length = 80;
@@ -17,10 +20,11 @@ public class Tunnel extends Stage {
             try {
                 startTime = System.currentTimeMillis();
                 System.out.println(c.getName() + " готовится к этапу(ждет): " + description);
-                //ВХОД В ТОННЕЛЬ ДОПИСАТЬ!
+                smp.acquire();
                 waitTime = System.currentTimeMillis() - startTime;
                 System.out.println(c.getName() + " начал этап: " + description);
                 Thread.sleep(t = time(c));
+                smp.release();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
@@ -29,10 +33,10 @@ public class Tunnel extends Stage {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return (t+waitTime);
+        return (t + waitTime);
     }
 
-    public long time(Car c){
+    public long time(Car c) {
         return (length / c.getSpeed() * 1000);
     }
 }

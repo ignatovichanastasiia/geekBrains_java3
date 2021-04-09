@@ -1,5 +1,10 @@
 package races;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Optional;
+
 public class Car implements Runnable {
     private static int CARS_COUNT;
 
@@ -49,5 +54,16 @@ public class Car implements Runnable {
 //        for (int i = 0; i < race.getStages().size(); i++) {
 //            race.getStages().get(i).go(this);
 //        }
+    }
+
+    public static Car winner(Car[] cars) {
+        ArrayList<Car> list = new ArrayList<>(Arrays.asList(cars));
+        Car win = list.get(0);
+        for (Car c : list) {
+            if (win.getT() > c.getT()) win = c;
+            System.out.print(c.getName() + ": " + c.getT() + "; ");
+
+        }
+        return win;
     }
 }
