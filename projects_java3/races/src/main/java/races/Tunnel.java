@@ -6,7 +6,7 @@ public class Tunnel extends Stage {
     long t;
     long waitTime;
     long startTime;
-    Semaphore smp = new Semaphore(MainCode.CARS_COUNT / 2);
+    Semaphore smp = new Semaphore(MainCode.CARS_COUNT / 2, true);
 
     public Tunnel() {
         this.length = 80;

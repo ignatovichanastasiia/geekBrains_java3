@@ -18,7 +18,7 @@ public class MainCode {
             cars[i] = new Car(race, 20 + (int) (Math.random() * 10));
         }
         //ЗАПУСК МАШИН - ТРЕДС + БАРЬЕР
-        CyclicBarrier cb = new CyclicBarrier(CARS_COUNT);
+        CyclicBarrier cb = new CyclicBarrier(CARS_COUNT+1);
         for (int i = 0; i < cars.length; i++) {
             final int w = i;
             new Thread(() -> {
@@ -27,22 +27,19 @@ public class MainCode {
                     Thread.sleep(500 + (int) (Math.random() * 800));
                     cb.await();
                     System.out.println(cars[w].getName() + " стартовал. ");
+                    for (int j = 0; j < race.getStages().size(); j++) {
+                        long t = race.getStages().get(j).go(cars[w]);
+                        cars[w].setT(cars[w].getT() + t);
+                    }
+                    cb.await();
                 } catch (InterruptedException | BrokenBarrierException e) {
                     e.printStackTrace();
-                }
-                for (int j = 0; j < race.getStages().size(); j++) {
-                    long t = race.getStages().get(j).go(cars[w]);
-                    cars[w].setT(cars[w].getT() + t);
                 }
             }).start();
         }
         try {
-            Thread.sleep(500);
+            cb.await();
             System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
             cb.await();
             System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
             Car win = Car.winner(cars);

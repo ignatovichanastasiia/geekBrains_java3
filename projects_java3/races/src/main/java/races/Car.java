@@ -61,7 +61,7 @@ public class Car implements Runnable {
         Car win = list.get(0);
         for (Car c : list) {
             if (win.getT() > c.getT()) win = c;
-            System.out.print(c.getName() + ": " + c.getT() + "; ");
+            System.out.print(c.getName() + ": " + c.getT() + "; \n");
 
         }
         return win;
