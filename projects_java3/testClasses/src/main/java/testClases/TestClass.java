@@ -7,6 +7,7 @@ import java.util.List;
 
 public class TestClass {
     private static final Integer KEY = 4;
+    private static final Integer[] KEYS = {1,4};
     private static int count;
     private static List<Integer> list2;
 
@@ -26,6 +27,13 @@ public class TestClass {
         list2.toArray(arr2);
         count = 0;
         return arr2;
+    }
+
+    public static boolean arrWithNumbers(Integer[] arr){
+        List<Integer> list = new ArrayList<>(Arrays.asList(arr));
+        List<Integer> keys = new ArrayList<>(Arrays.asList(KEYS));
+        if(!list.containsAll(keys)) return false;
+        return true;
     }
 
 
