@@ -11,7 +11,7 @@ import java.net.Socket;
 
 public class Window extends JFrame {
     private final static String IP_ADDRESS = "localhost"; //127.0.0.1
-    private final static int SERVER_PORT = 8081;
+    private final static int SERVER_PORT = 8080;
     private Socket socket;
     private DataInputStream dis;
     private DataOutputStream dos;

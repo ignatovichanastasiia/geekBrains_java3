@@ -1,0 +1,19 @@
+ERROR 2021-04-15 01:39:44 [main] ServerSide.MyServer (MyServer.java:35) - Server problemAddress already in use: NET_Bind
+INFO  2021-04-15 01:39:44 [main] ServerSide.MyServer (MyServer.java:37) - Server stopped
+ERROR 2021-04-15 01:41:34 [main] ServerSide.MyServer (MyServer.java:35) - Server problem: Address already in use: NET_Bind
+INFO  2021-04-15 01:41:34 [main] ServerSide.MyServer (MyServer.java:37) - Server stopped
+INFO  2021-04-15 01:42:55 [main] ServerSide.MyServer (MyServer.java:27) - Server started
+INFO  2021-04-15 01:43:43 [pool-3-thread-1] ServerSide.MyServer (MyServer.java:139) - A - auth com - isNickBusy
+INFO  2021-04-15 01:43:43 [pool-3-thread-1] ServerSide.MyServer (MyServer.java:145) - A comming...
+INFO  2021-04-15 01:43:43 [pool-3-thread-1] ServerSide.MyServer (MyServer.java:128) - A - user add to online-list
+INFO  2021-04-15 01:43:52 [pool-3-thread-1] ServerSide.MyServer (MyServer.java:108) - A - user send message
+INFO  2021-04-15 01:44:20 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:139) - B - auth com - isNickBusy
+INFO  2021-04-15 01:44:20 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:145) - B comming...
+INFO  2021-04-15 01:44:20 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:108) - Админ - user send message
+INFO  2021-04-15 01:44:20 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:128) - B - user add to online-list
+INFO  2021-04-15 01:44:27 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:108) - B - user send message
+INFO  2021-04-15 01:44:27 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:108) - B - user send message
+INFO  2021-04-15 01:44:37 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:100) - B - user call unknown com - not-code-problem
+INFO  2021-04-15 01:44:37 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:118) - B - user send message
+INFO  2021-04-15 01:44:53 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:94) - B - user call history com
+INFO  2021-04-15 01:44:54 [pool-4-thread-1] ServerSide.MyServer (MyServer.java:118) - B - user send message
