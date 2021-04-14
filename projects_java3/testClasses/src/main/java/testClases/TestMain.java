@@ -13,6 +13,8 @@ public class TestMain {
     private Integer[] arr3 = {4, 5, 6, 7, 4, 3, 2, 1};
     private Integer[] resArr3 = {3, 2, 1};
     private Integer[] arr4 = {4, 5, 6, 7, 4, 3, 2};
+    private Integer[] arr5 = {4,4,4,4,4,4};
+    private Integer[] arr6 = {4,4,4,4,4,1};
 
     @Test
     public void test1() {
@@ -58,5 +60,23 @@ public class TestMain {
     public void test8() {
         TestClass tc = new TestClass();
         Assert.assertFalse(tc.arrWithNumbers(arr4));
+    }
+
+    @Test
+    public void test9() {
+        TestClass2 tc2 = new TestClass2();
+        Assert.assertFalse(tc2.arrOnlyNumbers(arr3));
+    }
+
+    @Test
+    public void test10() {
+        TestClass2 tc2 = new TestClass2();
+        Assert.assertFalse(tc2.arrOnlyNumbers(arr5));
+    }
+
+    @Test
+    public void test11() {
+        TestClass2 tc2 = new TestClass2();
+        Assert.assertTrue(tc2.arrOnlyNumbers(arr6));
     }
 }

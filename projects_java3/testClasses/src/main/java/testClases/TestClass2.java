@@ -1,5 +1,9 @@
 package testClases;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class TestClass2 {
     private static final int KEY = 4;
     private static int count = 0;
@@ -36,5 +40,17 @@ public class TestClass2 {
             k++;
         }
         return arr2;
+    }
+
+    public static boolean arrOnlyNumbers(Integer[] arr){
+        int count1=0;
+        int count4=0;
+        for (Integer a: arr) {
+            if(a==1) count1++;
+            if(a==4) count4++;
+            if(a!=1&&a!=4) return false;
+        }
+        if(count1==0||count4==0)return false;
+        return true;
     }
 }
