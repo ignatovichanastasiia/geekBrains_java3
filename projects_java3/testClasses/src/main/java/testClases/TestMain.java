@@ -13,8 +13,8 @@ public class TestMain {
     private Integer[] arr3 = {4, 5, 6, 7, 4, 3, 2, 1};
     private Integer[] resArr3 = {3, 2, 1};
     private Integer[] arr4 = {4, 5, 6, 7, 4, 3, 2};
-    private Integer[] arr5 = {4,4,4,4,4,4};
-    private Integer[] arr6 = {4,4,4,4,4,1};
+    private Integer[] arr5 = {4, 4, 4, 4, 4, 4};
+    private Integer[] arr6 = {4, 4, 4, 4, 4, 1};
 
     @Test
     public void test1() {
@@ -39,11 +39,13 @@ public class TestMain {
         TestClass2 tc2 = new TestClass2();
         Assert.assertArrayEquals(resArr1, tc2.arrCut2(arr1));
     }
+
     @Test
     public void test5() {
         TestClass2 tc2 = new TestClass2();
         Assert.assertArrayEquals(resArr2, tc2.arrCut2(arr2));
     }
+
     @Test
     public void test6() {
         TestClass2 tc2 = new TestClass2();
