@@ -1,7 +1,8 @@
 package annotation;
 
 public class MainAnnApp {
-    //предполагается, что сначала выполняются методы before, затем test, затем after, вне зависимости от приоритетов. Приоритеты работают в пределах одного типа;
+    //предполагается, что сначала выполняются методы before, затем test, затем after, вне зависимости от приоритетов.
+    // Приоритеты работают в пределах одного типа;
     public static void main(String[] args) {
         AnnotationApp.start(MainAnnApp.class);
     }
