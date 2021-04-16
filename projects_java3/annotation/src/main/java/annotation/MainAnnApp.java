@@ -32,13 +32,13 @@ public class MainAnnApp {
         System.out.println("test4");
     }
 
-    @MyAfterAnnotation (priority = 1)
+    @MyAfterAnnotation (priority = 2)
     public static void afterTest1() {
         System.out.println("Some after testing closing");
     }
 
-    @MyAfterAnnotation (priority = 2)
-    public static void afterTest2() {
-        System.out.println("Some after testing closing");
-    }
+//    @MyAfterAnnotation (priority = 2)
+//    public static void afterTest2() {
+//        System.out.println("Some after testing closing");
+//    }
 }

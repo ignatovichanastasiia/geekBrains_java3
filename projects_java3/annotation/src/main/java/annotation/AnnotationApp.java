@@ -9,14 +9,22 @@ public class AnnotationApp {
     private static final int maxMethodAmount = 10;
     public static Map<Integer, Method> methodMap;
 
+
     public static void start(Class c) {
+        boolean before = true;
+        boolean after = true;
         methodMap = new TreeMap<>();
         Method[] methods = c.getDeclaredMethods();
         for (Method met : methods) {
             if (met.isAnnotationPresent(MyBeforeAnnotation.class)) {
-                if ((Integer) met.getDeclaredAnnotation(MyBeforeAnnotation.class).priority() >= 1 && (Integer) met.getDeclaredAnnotation(MyBeforeAnnotation.class).priority() <= maxMethodAmount) {
-                    mapPut((Integer) met.getDeclaredAnnotation(MyBeforeAnnotation.class).priority() * maxMethodAmount, met);
-                } else {
+                if (before) {
+                    if ((Integer) met.getDeclaredAnnotation(MyBeforeAnnotation.class).priority() >= 1 && (Integer) met.getDeclaredAnnotation(MyBeforeAnnotation.class).priority() <= maxMethodAmount) {
+                        mapPut((Integer) met.getDeclaredAnnotation(MyBeforeAnnotation.class).priority() * maxMethodAmount, met);
+                        before = false;
+                    } else {
+                        ThrowExc();
+                    }
+                }else{
                     ThrowExc();
                 }
             }
@@ -28,9 +36,14 @@ public class AnnotationApp {
                 }
             }
             if (met.isAnnotationPresent(MyAfterAnnotation.class)) {
-                if ((Integer) met.getDeclaredAnnotation(MyAfterAnnotation.class).priority() >= 1 && (Integer) met.getDeclaredAnnotation(MyAfterAnnotation.class).priority() <= maxMethodAmount) {
-                    mapPut((Integer) met.getDeclaredAnnotation(MyAfterAnnotation.class).priority() * 100 * maxMethodAmount, met);
-                } else {
+                if(after) {
+                    if ((Integer) met.getDeclaredAnnotation(MyAfterAnnotation.class).priority() >= 1 && (Integer) met.getDeclaredAnnotation(MyAfterAnnotation.class).priority() <= maxMethodAmount) {
+                        mapPut((Integer) met.getDeclaredAnnotation(MyAfterAnnotation.class).priority() * 100 * maxMethodAmount, met);
+                        after=false;
+                    } else {
+                        ThrowExc();
+                    }
+                }else {
                     ThrowExc();
                 }
             }
@@ -49,13 +62,13 @@ public class AnnotationApp {
     }
 
     private static void ThrowExc() {
-        throw new RuntimeException("priority is not 1-" + maxMethodAmount);
+        throw new RuntimeException("Либо приоритет больше "+maxMethodAmount+", либо более, чем по одному, методов before и after");
     }
 
     private static void mapPut(int priority, Method m) {
         int pri = priority;
         while (methodMap.containsKey(pri)) {
-            pri = pri+1;
+            pri = pri + 1;
         }
         methodMap.put(pri, m);
     }
